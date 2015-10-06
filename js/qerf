@@ -1,0 +1,20 @@
+			if (animDecimal == 1) {
+				
+				this.segments.forEach(function(segment) {
+				//console.log(segment)
+				ctx.fillStyle = 'black';
+				var segmentAngle = segment.value/circumference*(Math.PI*2);
+				var scaleAnimation = animDecimal;
+				var rotation = -(cumulativeAngle + segmentAngle)+segmentAngle/2,
+				tX = newCanvas.width/2+scaleAnimation*outerRadius*Math.cos(rotation)-10,
+				tY = newCanvas.height/2-scaleAnimation*outerRadius*Math.sin(rotation);
+				if(rotation < -Math.PI/2){
+					tX += 20;
+				}
+				//ctx.translate(tX,tY)
+				//ctx.rotate(-rotation);
+				ctx.fillText('$'+segment.value/segment.label, tX, tY);
+				//ctx.rotate(rotation);
+				//ctx.translate(tX,tY);
+				});
+			}

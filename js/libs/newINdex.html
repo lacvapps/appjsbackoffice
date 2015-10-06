@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+<style>
+svg{
+	width: 100%;
+	height: 100%;
+}
+path.slice{
+	stroke-width:2px;
+}
+
+polyline{
+	opacity: .3;
+	stroke: black;
+	stroke-width: 2px;
+	fill: none;
+}
+
+body {
+	width: 100%;
+	height: 100%;
+}
+
+.chart {
+	width: 800px;
+	height: 800px;
+}
+</style>
+<script src="d3.min.js"></script>
+<script src="jquery.min.js"></script>
+</head>
+<body>
+	<div id="cassette1" class="chart" style="width: 800; height: 800;"><h2>Chart 1</h2></div>
+	<div id="cassette2" class="chart" style="width: 800; height: 800;"><h2>Chart 2</h2></div>
+	<script>
+
+	Cassette1 =
+	[
+		{
+			label : "$1",
+			total : "Total $15",
+			tokenDetail : 15,
+			arcColor : "blue"
+		},
+		{
+			label : "$5",
+			total : "Total $55",
+			tokenDetail : 11,
+			arcColor : "green"
+		},
+		{
+			label : "$20",
+			total : "Total $200",
+			tokenDetail : 10,
+			arcColor : "orange"
+		},
+		{
+			label : "$100",
+			total : "Total $3200",
+			tokenDetail : 32,
+			arcColor : "purple"
+		}
+	];
+
+	Cassette2 =
+	[
+		{
+			label : "$10",
+			total : "Total $0",
+			tokenDetail : 0,
+			arcColor : "blue"
+		},
+		{
+			label : "$50",
+			total : "Total $350",
+			tokenDetail : 7,
+			arcColor : "green"
+		},
+		{
+			label : "FORCED",
+			total : "Total IDK",
+			tokenDetail : 4,
+			arcColor : "orange"
+		},
+		{
+			label : "REJECT",
+			total : "Total IDK",
+			tokenDetail : 3,
+			arcColor : "purple"
+		}
+	];
+
+
+	mimo = [Cassette1, Cassette2];
+
+	var width = 600;
+	var height = 600;
+	var radius = Math.min(width, height) / 2;
+
+	var i = 0;
+	$('.chart').each( function() {
+		//var svg = d3.select(this).select("svg > g");
+		// Check if empty
+		/*if (svg.empty()){
+			return
+		} else {
+			return
+		}*/
+
+		var thisChart = $(this).attr('id');
+		//console.log(thisChart);
+		//mimo[i][0].push( 6, 15, 3 );
+		var svg = d3.select("#" + $(this).attr('id')).append("svg")
+			.attr("width", 600)
+			.attr("height", 600)
+			.append("g");
+
+		svg.append("g")
+			.attr("class", "slices");
+		svg.append("g")
+			.attr("class", "labels");
+		svg.append("g")
+			.attr("class", "lines");
+		svg.append("g")
+			.attr("class", "cash");
+
+		var arc = d3.svg.arc()
+			.innerRadius(radius * 0.4)
+			.outerRadius(radius * 0.7);
+
+		var outerArc = d3.svg.arc()
+			.innerRadius(radius * 0.8)
+			.outerRadius(radius * 0.8);
+
+		var pie = d3.layout.pie()
+			.sort(null)
+			.value(function (d) { return d; });
+
+		svg.attr("transform", "translate(" + ((width / 2) + 100) + "," + height / 2 + ")");
+
+		var key = function(d){ return d.data.label; };
+		//console.log(key);
+
+		var thisCassette = [];
+		var thisLabel = [];
+		var thisTotal = [];
+		var colorRange = [];
+		var color = d3.scale.ordinal()
+			.range(colorRange);
+
+			// get info in mimo[i] cassette1, cassette2 etc...
+		for (var j = 0; j < mimo[i].length; j++) {
+			//console.log(mimo[i][j]['tokenDetail']);
+			if (mimo[i][j]['tokenDetail'] > 0) {
+					thisCassette.push(mimo[i][j]['tokenDetail']);
+					thisLabel.push(mimo[i][j]['label']);
+					thisTotal.push(mimo[i][j]['total']);
+					colorRange.push(mimo[i][j]['arcColor']);
+					//console.log(thisCassette);
+			}
+		}
+
+		var slice = svg.select(".slices").selectAll("path.slice")
+			.data(pie(thisCassette))
+
+
+		slice.enter()
+			.insert("path")
+			.attr("class", "slice")
+			.style("fill", function(d) { return color(d.data); })
+			.each(function(d) {
+				this._current = d;
+			});
+
+		slice = svg.select(".slices").selectAll("path.slice")
+			.data(pie(thisCassette));
+
+		slice
+			.transition().duration(100)
+			.attrTween("d", function(d) {
+				var interpolate = d3.interpolate(this._current, d);
+				var _this = this;
+				return function(t) {
+					_this._current = interpolate(t);
+					return arc(_this._current);
+				};
+			});
+
+		slice = svg.select(".slices").selectAll("path.slice")
+			.data(pie(thisCassette));
+
+		slice
+			.exit().transition().delay(100).duration(0)
+			.remove();
+
+			/* ------- TEXT LABELS -------*/
+
+		var text = svg.select(".labels").selectAll("text")
+			.data(pie(thisCassette));
+
+		text.each()
+			.enter()
+			.append("text")
+			.attr("dy", ".35em")
+			.style("opacity", 0)
+			.text(function(d, i) {
+				return thisTotal[i];
+			})
+			.each(function(d) {
+				this._current = d;
+			});
+
+		function midAngle(d){
+			return d.startAngle + (d.endAngle - d.startAngle)/2;
+		}
+
+		text = svg.select(".labels").selectAll("text")
+			.data(pie(thisCassette));
+
+		text.transition().duration(100)
+			.style("opacity", function(d) {
+				return d.data.value == 0 ? 0 : 1;
+			})
+			.attrTween("transform", function(d) {
+				var interpolate = d3.interpolate(this._current, d);
+				var _this = this;
+				return function(t) {
+					var d2 = interpolate(t);
+					_this._current = d2;
+					var pos = outerArc.centroid(d2);
+					pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+					pos[1] = pos[1] - 10;
+						if (midAngle(d2) < Math.PI) {
+						 	pos[0] = pos[0] - 50;
+						} else {
+							pos[0] = pos[0] + 50;
+						}
+					return "translate("+ pos +")";
+				};
+			})
+			.styleTween("text-anchor", function(d){
+				var interpolate = d3.interpolate(this._current, d);
+				return function(t) {
+					var d2 = interpolate(t);
+					return midAngle(d2) < Math.PI ? "start":"end";
+				};
+			});
+
+		/*text = svg.select(".labels").selectAll("text")
+			.data(pie(thisCassette));
+
+		text
+			.exit().transition().delay(100)
+			.remove();
+		*/
+
+
+		/* ------- SLICE TO TEXT POLYLINES -------*/
+
+		var polyline = svg.select(".lines").selectAll("polyline")
+			.data(pie(thisCassette));
+
+		polyline.enter()
+			.append("polyline")
+			.style("opacity", 0)
+			.each(function(d) {
+				this._current = d;
+			});
+
+		polyline = svg.select(".lines").selectAll("polyline")
+			.data(pie(thisCassette));
+
+		polyline.transition().duration(100)
+			.style("opacity", function(d) {
+				return d.data.value == 0 ? 0 : .5;
+			})
+			.attrTween("points", function(d){
+				this._current = this._current;
+				var interpolate = d3.interpolate(this._current, d);
+				var _this = this;
+				return function(t) {
+					var d2 = interpolate(t);
+					_this._current = d2;
+					//xy length
+					var pos = outerArc.centroid(d2);
+					pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+					//xy pos
+					var xypos = arc.centroid(d);
+					xypos[0] = xypos[0] / 0.85;
+					xypos[1] = xypos[1] / 0.85;
+
+					return [xypos, outerArc.centroid(d2), pos];
+				};
+			});
+
+		polyline = svg.select(".lines").selectAll("polyline")
+			.data(pie(thisCassette));
+
+		polyline
+			.exit().transition().delay(100)
+			.remove();
+
+		/* ---------- ATTACH DENOMINATION TO SLICE -------------- */
+
+		var cash = svg.select(".cash").selectAll("text")
+			.data(pie(thisCassette));
+
+		cash
+			.enter()
+			.append("text")
+			.attr("transform", function (d) { return "translate(" + arc.centroid(d) + ")"; })
+			.attr("text-anchor", "middle")
+			.attr("font-size", "1em")
+			.text(function (d, i) {
+				//if (d.data > 0) {
+				return thisLabel[i];
+				//}
+			});
+
+		i++
+	});
+
+
+
+	</script>
+
+</body>
+</html>

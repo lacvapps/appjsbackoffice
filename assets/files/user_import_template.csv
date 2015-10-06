@@ -1,0 +1,4 @@
+"User Import",
+"User ID","Secondary ID","Username","Password","Cashier/Manager","Dispense Limit","Allow Transaction Reconciliation","Mgr. Only Dispense / Deposit","Prompt for Business Date","Machine Operator","Registers Selected"
+"54321","","user1","password1","0","25000","y","y","y","y","999"
+"09876","","user2","password2","1","50000","y","n","y","y","900"

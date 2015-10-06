@@ -1,0 +1,149 @@
+/* Put your CSS here */
+.ember-application {
+    margin: 20px;
+}
+
+.fade {
+  opacity: 0;
+  -webkit-transition: opacity 0.15s linear;
+  -moz-transition: opacity 0.15s linear;
+  -o-transition: opacity 0.15s linear;
+  transition: opacity 0.15s linear;
+}
+.fade.in {
+  opacity: 1;
+}
+
+
+#terminalDBInput{
+	width: 30%;
+
+}
+
+.percent{
+	position: relative;
+	top: 65px;
+	/*
+	margin-top: 45px;
+	margin-left: 67px;
+	*/
+}
+
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+svg:not(:root) {
+  overflow: visible;
+}
+
+path.slice {
+  stroke-width:2px;
+}
+
+polyline {
+  opacity: .3;
+  stroke: black;
+  stroke-width: 2px;
+  fill: none;
+}
+
+.chart {
+  width: 300 !important;
+  height: 200 !important;
+}
+#legend ul {
+         background: #fff;
+         padding: 10px 0px;
+         text-align: left;
+         list-style: none;
+         margin: 0 auto;
+         display: inline-block;
+}
+
+#legend li {
+  margin-left: 20px;
+  float: left;
+  width: 100%;
+ }  
+ #legend h4 {
+    padding-bottom: 10px;
+    padding-left: 5px;
+    margin-top: 0px;
+ }
+
+
+.no-extras {
+  border: 1 !important;
+  box-shadow: none !important;
+  background-color: white !important;
+  cursor: default !important;
+}
+
+.pulse {
+	-webkit-animation: pulse 1s linear infinite;
+	-moz-animation: pulse 1s linear infinite;
+	-ms-animation: pulse 1s linear infinite;
+	animation: pulse 1s linear infinite;
+}
+
+@keyframes "pulse" {
+ 0% {
+    color: rgba(165, 25, 25, 1);
+ }
+ 90% {
+    color: rgba(255,0,0,0.0);
+ }
+ 100% {
+    color: rgba(255,0,0,1.0);
+ }
+
+}
+
+@-moz-keyframes pulse {
+ 0% {
+   color: rgba(165, 25, 25, 1);
+ }
+ 90% {
+   color: rgba(255,0,0,0.0);
+ }
+ 100% {
+   color: rgba(255,0,0,1.0);
+ }
+
+}
+
+@-webkit-keyframes "pulse" {
+ 0% {
+   color: rgba(165, 25, 25, 1);
+ }
+ 90% {
+   color: rgba(255,0,0,0.0);
+ }
+ 100% {
+   color: rgba(255,0,0,1.0);
+ }
+
+}
+
+@-ms-keyframes "pulse" {
+ 0% {
+   color: rgba(165, 25, 25, 1);
+ }
+ 90% {
+   color: rgba(255,0,0,0.0);
+ }
+ 100% {
+   color: rgba(255,0,0,1.0);
+ }
+
+}
